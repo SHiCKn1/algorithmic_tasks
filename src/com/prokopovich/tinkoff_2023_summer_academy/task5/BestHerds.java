@@ -8,7 +8,75 @@ import java.util.Scanner;
 
 public class BestHerds {
 
-    public
+    public static int getWeek(String s) {
+        char charA = 'a';
+        char charB = 'b';
+        char charC = 'c';
+
+        int na = 0;
+        int nb = 0;
+        int nc = 0;
+
+        for (int k = 0; k < s.length(); k++) {
+            char ch = s.charAt(k);
+            if (ch == charA) {
+                na++;
+            } else if (ch == charB) {
+                nb++;
+            } else if (ch == charC) {
+                nc++;
+            }
+        }
+
+        return Math.max(na,Math.max(nb,nc)) - Math.min(na,Math.min(nb,nc));
+    }
+
+    public static int getPower(String s) {
+        char charA = 'a';
+        char charB = 'b';
+        char charC = 'c';
+
+        int na = 0;
+        int nb = 0;
+        int nc = 0;
+
+        for (int k = 0; k < s.length(); k++) {
+            char ch = s.charAt(k);
+            if (ch == charA) {
+                na++;
+            } else if (ch == charB) {
+                nb++;
+            } else if (ch == charC) {
+                nc++;
+            }
+        }
+
+        return na + nb + nc;
+    }
+
+    public static List<String> getCombinations(List<String> originalList) {
+        List<String> result = new ArrayList<>();
+        StringBuilder currentCombination = new StringBuilder();
+
+        backtrack(originalList, 0, currentCombination, result);
+
+        return result;
+    }
+
+    private static void backtrack(List<String> originalList, int index, StringBuilder currentCombination, List<String> result) {
+        if (index == originalList.size()) {
+            result.add(currentCombination.toString());
+            return;
+        }
+
+        // Попробовать добавить элемент в текущую комбинацию
+        currentCombination.append(originalList.get(index));
+        backtrack(originalList, index + 1, currentCombination, result);
+        currentCombination.delete(currentCombination.length() - originalList.get(index).length(), currentCombination.length());
+
+        // Попробовать не добавлять элемент в текущую комбинацию
+        backtrack(originalList, index + 1, currentCombination, result);
+    }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -16,43 +84,40 @@ public class BestHerds {
         List<String> herds = new ArrayList<>();
         scanner.nextLine();
 
-        //заведем константы
-        char charA = 'a';
-        char charB = 'b';
-        char charC = 'c';
-
-
-        for (int qi = 0; qi < q; qi++) {
+       for (int qi = 0; qi < q; qi++) {
             String s = scanner.nextLine();
             herds.add(s);
         }
 
-        //теперь надо посчитать сколько лошадей каждого типа и вычислить слабость и силу
-        //Переберем все варианты
-        for (int i = 0; i < herds.size(); i++) {
-            for (int j = i + 1; j < herds.size(); j++) {
-                String s = herds.get(i);// + herds.get(j);
-                int na = 0;
-                int nb = 0;
-                int nc = 0;
+        List<String> result = getCombinations(herds);
 
-                for (int k = 0; k < s.length(); k++) {
-                    char ch = s.charAt(k);
-                    if (ch == charA) {
-                        na++;
-                    } else if (ch == charB) {
-                        nb++;
-                    } else if (ch == charC) {
-                        nc++;
-                    }
-                }
+       int cw = Integer.MAX_VALUE;
+       int cp = 0;
 
-                int weakness = Math.max(na,Math.max(nb,nc)) - Math.min(na,Math.min(nb,nc));
-                int power = na + nb + nc;
 
-                System.out.println(s + " " + weakness + " " + power);
+        // Вывод результатов
+        for (String combination : result) {
+            if(!(getPower(combination) == 0)) {
+                cw = Math.min(cw,getWeek(combination));
+
             }
+
+            //System.out.println(combination + " " +  + " " + getPower(combination));
         }
+
+        for (String combination : result) {
+            if(!(getPower(combination) == 0)) {
+                if((cw == getWeek(combination)) && (cp <= getPower(combination))) {
+                    cw = getWeek(combination);
+                    cp = getPower(combination);
+                }
+            }
+
+            //System.out.println(combination + " " +  + " " + getPower(combination));
+        }
+
+        System.out.println(cp);
+
     }
 
 
